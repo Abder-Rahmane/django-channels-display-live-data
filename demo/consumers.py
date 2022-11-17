@@ -9,7 +9,8 @@ from .serializers import PostSerializer
 
 class PostConsumer(ListModelMixin, GenericAsyncAPIConsumer):
 
-    queryset = Post.objects.all()
+    def get_queryset(self, **kwargs):
+        return HubriseOrder.objects.filter(ascount=self.scope["user"]).exclude(status__in=['En attente', 'Rejeter', 'Compléter', 'new', 'Livraison échouer']).order_by('created_at')
     serializer_class = PostSerializer
     permissions = (permissions.AllowAny,)
 
